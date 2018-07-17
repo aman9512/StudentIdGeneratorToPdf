@@ -108,36 +108,42 @@
    }
 
    while ($row = $GLOBALS['$result']->fetch_assoc()) {
+
        $pdf->AddPage();
 
        $pdf->SetLineStyle( array( 'width' => .5, 'color' => array(0,0,0)));
-       $pdf->Rect(10, 5, 82, 140);
+       $pdf->Rect(10, 5, 65, 95);
 
        $tempStudentImage =  $studentImages . "/" . $row['id'] . ".jpg";
        if(!file_exists($tempStudentImage)) $tempStudentImage = 'SikhAvatar.jpg';
-       $pdf->Image($tempStudentImage, 11, 5, 80, 100, 'JPG', '', '', false, 200, '', false, false, 0, false, false, true);
+
+       $pdf->Image($tempStudentImage, 10, 5, 65, 56, 'JPG', '', '', false, 200, '', false, false, 0, false, false, true);
 
        $pdf->SetAlpha(0.8); //for image transparency
-       $pdf->Image('Khalsa School Logo_Final.jpg', 65, 5, 25, 25, 'JPG', '', '', false, 150, '', false, false, 0, false, false, true);
+       $pdf->Image('Khalsa School Logo_Final.jpg', 56.5, 5, 18, 18, 'JPG', '', '', false, 150, '', false, false, 0, false, false, true);
+
        $pdf->SetAlpha(1.0);
-       $html = "<h4 style=text-align:center>Guru Angad Dev Khalsa School</h4>";
-       $pdf->writeHTMLCell(72, 10, 14, 107, $html, 0, 0, 0, true, 'C', false);
-       $html = "<h4 style=text-align:center> El Sobrante </h4>";
-       $pdf->writeHTMLCell(72, 10, 16, 112, $html, 0, 0, 0, true, 'C', false);
+       $html = "<h5 style=text-align:center>Guru Angad Dev Khalsa School</h5>";
+       $pdf->writeHTMLCell(56, 10, 14, 62, $html, 0, 0, 0, true, 'C', false);
+       $html = "<h5 style=text-align:center> El Sobrante </h5>";
+       $pdf->writeHTMLCell(56, 10, 12, 66, $html, 0, 0, 0, true, 'C', false);
 
        $pdf->SetFont('times', 'B', 14, '');
-       $pdf->SetXY(13,115);
-       $pdf->Cell(67, 15, 'ID: ' . $row['id'] . " ". 'Class:', 0, 0, 'C', 0, '', 0, false, 'T', 'C');
-       $pdf->Ln(4);
+       $pdf->SetXY(10,68);
+       $pdf->Cell(55, 12, 'ID: ' . $row['id'] . " ". 'Class:', 0, 0, 'C', 0, '', 0, false, 'T', 'C');
+       $pdf->Ln(3);
        $pdf->SetFont('times', 'B', 20, '');
-       $pdf->Cell(80, 22, $row['firstName'] . " ". $row['lastName'], 0, 0, 'C', 0, '', 0, false, 'T', 'C');
+       $pdf->SetXY(12,73);
+       $pdf->Cell(55, 18, $row['firstName'], 0, 0, 'C', 0, '', 0, false, 'T', 'C');
+       $pdf->Ln(7);
+       $pdf->SetXY(12,80);
+       $pdf->Cell(55, 18, $row['lastName'], 0, 0, 'C', 0, '', 0, false, 'T', 'C');
        $pdf->SetFont('times', '', 12, '');
  }
 
    $pdf->Output($pdfPath, 'F');
    $GLOBALS['$result']->free();
    $mysqli->close();
-   //$pdf->Output($pdfPath, 'F');
 }
 else {
   echo 'There was an error in generating pdf file';
