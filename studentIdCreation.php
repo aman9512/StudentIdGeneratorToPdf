@@ -30,6 +30,9 @@
  $studentImages = $_POST["imagesPath"];
  $pdfPath = $_POST["pdfPath"];
 
+ if(empty($_POST["NumberOfId"]) || $_POST["NumberOfId"] > 6) $GLOBALS["NumberOfId"] = 6;
+ else $GLOBALS["NumberOfId"] = $_POST["NumberOfId"];
+
  function createSqlDb()
  {
        DEFINE('DB_USERNAME', 'root');
@@ -107,39 +110,57 @@
        require_once(dirname(__FILE__).'/lang/eng.php');
        $pdf->setLanguageArray($l);
    }
-
+   $counter  = 1;
+   $PosX = 0;
+   $PosY = 0;
+   $pdf->AddPage(); //for the first time
+   $numPerRow = 3;
+   $idWidth = 60;
+   $idHeight = 95;
    while ($row = $GLOBALS['$result']->fetch_assoc()) {
 
-       $pdf->AddPage();
+       if($counter % ($GLOBALS["NumberOfId"]+1) == 0)
+       {
+         $pdf->AddPage();
+         $counter = 1;
+         $PosX = 0;
+         $PosY = 0;
+       }
+
+       if($counter % ($numPerRow + 1) == 0) $PosY = $idHeight + 2;
+       if($counter == 1 || $counter == 4) $PosX = (65*(($counter-1)%$numPerRow));
+       else $PosX = (65*(($counter-1)%$numPerRow)) + 2;
 
        $pdf->SetLineStyle( array( 'width' => .5, 'color' => array(0,0,0)));
-       $pdf->Rect(10, 5, 65, 95);
+       $pdf->Rect(2 + $PosX, 5 + $PosY, $idWidth, $idHeight); //x,y,w,h
 
        $tempStudentImage =  $studentImages . "/" . $row['id'] . ".jpg";
        if(!file_exists($tempStudentImage)) $tempStudentImage = 'SikhAvatar.jpg';
 
-       $pdf->Image($tempStudentImage, 10, 5, 65, 56, 'JPG', '', '', false, 200, '', false, false, 0, false, false, true);
+       $pdf->Image($tempStudentImage, 2 + $PosX, 5 + $PosY, $idWidth, 56, 'JPG', '', '', false, 200, '', false, false, 0, false, false, true);
 
        $pdf->SetAlpha(0.6); //for image transparency
-       $pdf->Image('Khalsa School Logo_Final.jpg', 56.5, 5, 18, 18, 'JPG', '', '', false, 150, '', false, false, 0, false, false, true);
+       $pdf->Image('Khalsa School Logo_Final.jpg', 44.5 + $PosX, 5 + $PosY, 18, 18, 'JPG', '', '', false, 150, '', false, false, 0, false, false, true);
 
        $pdf->SetAlpha(1.0);
        $html = "<h5 style=text-align:center>Guru Angad Dev Khalsa School</h5>";
-       $pdf->writeHTMLCell(56, 10, 14, 62, $html, 0, 0, 0, true, 'C', false);
+       $pdf->writeHTMLCell(56, 10, 6 + $PosX, 62 + $PosY, $html, 0, 0, 0, true, 'C', false); //w,h,x,y
        $html = "<h5 style=text-align:center> El Sobrante </h5>";
-       $pdf->writeHTMLCell(56, 10, 12, 66, $html, 0, 0, 0, true, 'C', false);
+       $pdf->writeHTMLCell(56, 10, 4 + $PosX, 66 + $PosY, $html, 0, 0, 0, true, 'C', false);
 
-       $pdf->SetFont('times', 'B', 14, '');
-       $pdf->SetXY(10,68);
+       $pdf->SetFont('times', 'B', 12, '');
+       $pdf->SetXY(2 + $PosX,68 + $PosY);
        $pdf->Cell(55, 12, 'ID: ' . $row['id'] . " ". 'Class: ' . $row['class'], 0, 0, 'C', 0, '', 0, false, 'T', 'C');
        $pdf->Ln(3);
-       $pdf->SetFont('times', 'B', 20, '');
-       $pdf->SetXY(12,73);
+       $pdf->SetFont('times', 'B', 18, '');
+       $pdf->SetXY(4 + $PosX,73 + $PosY);
        $pdf->Cell(55, 18, $row['firstName'], 0, 0, 'C', 0, '', 0, false, 'T', 'C');
        $pdf->Ln(7);
-       $pdf->SetXY(12,80);
+       $pdf->SetXY(4+ $PosX,80 + $PosY);
        $pdf->Cell(55, 18, $row['lastName'], 0, 0, 'C', 0, '', 0, false, 'T', 'C');
        $pdf->SetFont('times', '', 12, '');
+
+       $counter++;
  }
 
    $pdf->Output($pdfPath, 'F');
