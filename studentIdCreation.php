@@ -49,7 +49,8 @@
        $createStudentTable = "CREATE TABLE IF NOT EXISTS students"
                               . "(id VARCHAR(20) NOT NULL PRIMARY KEY,"
                               . "firstName VARCHAR(30) NOT NULL,"
-                              . "lastName VARCHAR(30) NOT NULL)";
+                              . "lastName VARCHAR(30) NOT NULL,"
+                              . "class VARCHAR(30) NOT NULL)";
        if(!$mysqli->query($createStudentTable)) echo $mysqli->error . ' error issue with creating table';
 
        insertCsvIntoTable($mysqli);
@@ -119,7 +120,7 @@
 
        $pdf->Image($tempStudentImage, 10, 5, 65, 56, 'JPG', '', '', false, 200, '', false, false, 0, false, false, true);
 
-       $pdf->SetAlpha(0.8); //for image transparency
+       $pdf->SetAlpha(0.6); //for image transparency
        $pdf->Image('Khalsa School Logo_Final.jpg', 56.5, 5, 18, 18, 'JPG', '', '', false, 150, '', false, false, 0, false, false, true);
 
        $pdf->SetAlpha(1.0);
@@ -130,7 +131,7 @@
 
        $pdf->SetFont('times', 'B', 14, '');
        $pdf->SetXY(10,68);
-       $pdf->Cell(55, 12, 'ID: ' . $row['id'] . " ". 'Class:', 0, 0, 'C', 0, '', 0, false, 'T', 'C');
+       $pdf->Cell(55, 12, 'ID: ' . $row['id'] . " ". 'Class: ' . $row['class'], 0, 0, 'C', 0, '', 0, false, 'T', 'C');
        $pdf->Ln(3);
        $pdf->SetFont('times', 'B', 20, '');
        $pdf->SetXY(12,73);
